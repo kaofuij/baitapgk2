@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Thêm Sinh Viên Mới{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Thêm Sinh Viên Mới</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('add') }}">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Họ và Tên <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Số Điện Thoại</label>
+                        <input type="tel" class="form-control" id="phone" name="phone">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Địa Chỉ</label>
+                        <textarea class="form-control" id="address" name="address" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="date_of_birth" class="form-label">Ngày Sinh</label>
+                        <input type="date" class="form-control" id="date_of_birth" name="date_of_birth">
+                    </div>
+                    
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">Hủy</a>
+                        <button type="submit" class="btn btn-primary">Lưu Sinh Viên</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Sinh Viên</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .main-content {
+            padding: 20px;
+            margin-top: 56px;
+        }
+        .profile-info {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: 100%;
+        }
+        .grades-table {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: 100%;
+        }
+        .student-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+            background-color: #e9ecef;
+        }
+        .avatar-container {
+            position: relative;
+            display: inline-block;
+        }
+        .avatar-upload {
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        .avatar-upload input[type="file"] {
+            display: none;
+        }
+        .avatar-upload label {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: #0d6efd;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .avatar-upload label:hover {
+            background-color: #0b5ed7;
+        }
+        .btn-default-avatar {
+            display: none;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #666;
+        }
+        .page-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            color: #0d6efd;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Hệ thống Quản lý Điểm</a>
+            <div class="d-flex">
+                <button onclick="studentLogout()" class="btn btn-outline-light">
+                    <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="container-fluid p-0">
+            <div class="row g-4">
+                <!-- Thông tin sinh viên - Cột trái -->
+                <div class="col-md-4">
+                    <div class="profile-info">
+                        <h4 class="page-title text-center">Thông tin sinh viên</h4>
+                        <div class="text-center">
+                            <div class="avatar-container">
+                                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAADDUExURUdwTJqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampqamnsyAAAA/nRSTlMA78cwCPZBSNvI+A0UAylUreQF5V9HLp7PRgMBE0oVJQJNESALQFsIHgs0NUEDDiAqM0lPBicoHEU2SREYVVhoYTxfK2RWXmcZLCNra15oWR8mO0YXIiBCRD1KT1gKYE1dRz0xcm5YMS97Mnt0hWMtYWt3gWxxbW6CIVl1QUaLkX5lhn+ESmOMkJU+LNGLQU8yOVJPWEVbYHA5QmWRim53jXmZh2drhZN1iYOLoJxuh49wfnOBlpdrk6ZugKN8ipCApJiOp5GXq6GGaXuDq4mjm6ypsLCvs6K0q7yttsW+vNCEv7jLzb3J6cfP1MvXEkPpUwAADZ9JREFUeNrtnXlbVUUUxpcTqKggZCJXUVRAMlQUxyugiIYDKuKEOSTOoqLirP7/T+jgAAKHs/fap5vr633y/MTab5+zz957zbXqzFwOHccexw7HVkcDa2CNYKwRb2l0xOsYI9Za8drEWmOsUYwxYq2RgLVWvDXGGiPeGsdOxw4nyX8v+oBYC8RbIxhrxGvHGPFaR6w14q0Ra01grA1vjQR/LzGtCB+wGBVtMdZIQCvGifcCPq0oP7DWifeCtxaj7bZKWYuGfcCKlW4xfC0a8AErSbwXPC2Gr8Xo+IDlI2nRQPCwlqXF8LXoA5ZJWgxfi/6Umz5hOeK86ANWCV9baxEsLF8jhq9FLS1GbNKiD1hmadEHLMO06AOWtcXwtRgTLLO06AOWWVr0B8tQizI2JljeWvQHy0iLJlioRRhYRlr0B8sgLfqDZZ4WfcAyS4s+YBmmRR+wzNKiD1jGadFxnNigWf7BSnbE/y+ZU7FLQbIjYuImcHnOqBllOx2RhDUz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" alt="Avatar" class="student-avatar" id="studentAvatar">
+                            </div>
+                            <div class="avatar-upload">
+                                <input type="file" id="avatarUpload" accept="image/*">
+                                <label for="avatarUpload"><i class="fas fa-camera me-1"></i> Thay đổi ảnh</label>
+                            </div>
+                            <h3 id="studentName" class="mb-1">Tên sinh viên</h3>
+                            <p class="text-muted" id="studentId">Mã sinh viên: </p>
+                        </div>
+                        <div class="mt-4 student-details">
+                            <p class="text-center"><i class="fas fa-envelope text-primary me-2"></i> <span class="info-label">Email:</span> <span id="studentEmail"></span></p>
+                            <p class="text-center"><i class="fas fa-birthday-cake text-primary me-2"></i> <span class="info-label">Ngày sinh:</span> <span id="studentDob"></span></p>
+                            <p class="text-center"><i class="fas fa-venus-mars text-primary me-2"></i> <span class="info-label">Giới tính:</span> <span id="studentGender"></span></p>
+                            <p class="text-center"><i class="fas fa-map-marker-alt text-primary me-2"></i> <span class="info-label">Nơi sinh:</span> <span id="studentBirthplace"></span></p>
+                            <p class="text-center"><i class="fas fa-users text-primary me-2"></i> <span class="info-label">Dân tộc:</span> <span id="studentEthnicity"></span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bảng điểm - Cột phải -->
+                <div class="col-md-8">
+                    <div class="grades-table">
+                        <h4 class="page-title">Bảng điểm sinh viên</h4>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Mã học phần</th>
+                                        <th>Tên học phần</th>
+                                        <th>Số tín chỉ</th>
+                                        <th>Điểm số (Hệ 10)</th>
+                                        <th>Điểm chữ</th>
+                                        <th>GPA (Hệ 4)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="gradesTableBody">
+                                    <!-- Dữ liệu điểm sẽ được thêm vào đây bằng JavaScript -->
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-primary">
+                                        <td colspan="3"><strong>Tổng số tín chỉ:</strong></td>
+                                        <td id="totalCredits"><strong>0</strong></td>
+                                        <td colspan="3"></td>
+                                    </tr>
+                                    <tr class="table-info">
+                                        <td colspan="3"><strong>Điểm trung bình tích lũy:</strong></td>
+                                        <td colspan="4" id="gpa"><strong>0.00</strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Kiểm tra đăng nhập khi tải trang
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentStudent = localStorage.getItem('currentStudent');
+            if (!currentStudent) {
+                window.location.href = 'index.html';
+                return;
+            }
+            loadStudentInfo();
+            setupAvatarUpload();
+        });
+
+        // Xử lý tải ảnh avatar
+        function setupAvatarUpload() {
+            const avatarUpload = document.getElementById('avatarUpload');
+            const studentAvatar = document.getElementById('studentAvatar');
+            
+            // Kiểm tra xem có avatar đã lưu không
+            const studentId = JSON.parse(localStorage.getItem('currentStudent')).studentId;
+            const savedAvatar = localStorage.getItem(`avatar_${studentId}`);
+            if (savedAvatar) {
+                studentAvatar.src = savedAvatar;
+            }
+            
+            avatarUpload.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        studentAvatar.src = e.target.result;
+                        // Lưu avatar vào localStorage
+                        const studentId = JSON.parse(localStorage.getItem('currentStudent')).studentId;
+                        localStorage.setItem(`avatar_${studentId}`, e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Load thông tin sinh viên
+        function loadStudentInfo() {
+            const studentData = JSON.parse(localStorage.getItem('currentStudent'));
+            if (studentData) {
+                document.getElementById('studentName').textContent = studentData.fullName;
+                document.getElementById('studentId').textContent = 'Mã sinh viên: ' + studentData.studentId;
+                document.getElementById('studentEmail').textContent = studentData.email;
+                document.getElementById('studentDob').textContent = studentData.dateOfBirth;
+                document.getElementById('studentGender').textContent = studentData.gender;
+                document.getElementById('studentBirthplace').textContent = studentData.birthplace;
+                document.getElementById('studentEthnicity').textContent = studentData.ethnicity;
+
+                // Kiểm tra và tải avatar nếu có
+                const savedAvatar = localStorage.getItem(`avatar_${studentData.studentId}`);
+                if (savedAvatar) {
+                    document.getElementById('studentAvatar').src = savedAvatar;
+                }
+
+                // Load bảng điểm
+                loadGrades(studentData.studentId);
+            }
+        }
+
+        // Load bảng điểm
+        function loadGrades(studentId) {
+            const grades = JSON.parse(localStorage.getItem('grades')) || [];
+            const studentGrades = grades.filter(grade => grade.studentId === studentId);
+            const tableBody = document.getElementById('gradesTableBody');
+            tableBody.innerHTML = '';
+
+            let totalPoints = 0;
+            let totalCredits = 0;
+
+            studentGrades.forEach((grade, index) => {
+                // Chuyển điểm tổng kết (hệ 10) sang GPA (hệ 4)
+                let gpaValue = 0;
+                if (grade.totalScore >= 8.5) gpaValue = 4.0;
+                else if (grade.totalScore >= 7.0) gpaValue = 3.0;
+                else if (grade.totalScore >= 5.5) gpaValue = 2.0;
+                else if (grade.totalScore >= 4.0) gpaValue = 1.0;
+                else gpaValue = 0;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${grade.courseCode}</td>
+                    <td>${grade.courseName}</td>
+                    <td>${grade.credits}</td>
+                    <td>${grade.totalScore || 'undefined'}</td>
+                    <td>${grade.letterGrade || 'undefined'}</td>
+                    <td>${gpaValue.toFixed(1)}</td>
+                `;
+                tableBody.appendChild(row);
+
+                // Sử dụng điểm GPA để tính điểm trung bình
+                totalPoints += gpaValue * grade.credits;
+                totalCredits += parseInt(grade.credits) || 0;
+            });
+
+            // Tính và hiển thị GPA
+            const gpa = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : '0.00';
+            document.getElementById('gpa').textContent = gpa;
+            document.getElementById('totalCredits').textContent = totalCredits;
+        }
+
+        // Đăng xuất
+        function studentLogout() {
+            localStorage.removeItem('currentStudent');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html> 

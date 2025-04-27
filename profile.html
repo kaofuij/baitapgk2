@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông Tin Sinh Viên - Quản Lý Sinh Viên</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="profile.html">Quản Lý Sinh Viên</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="profile.html">Thông Tin Cá Nhân</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Danh Sách Sinh Viên</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <span class="text-white me-3" id="userInfo"></span>
+                    <button onclick="logout()" class="btn btn-outline-light">Đăng Xuất</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">Thông Tin Sinh Viên</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">Họ và tên:</div>
+                            <div class="col-md-8" id="profile-fullname"></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">Mã số sinh viên:</div>
+                            <div class="col-md-8" id="profile-studentId"></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">Email:</div>
+                            <div class="col-md-8" id="profile-email"></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">Số điện thoại:</div>
+                            <div class="col-md-8" id="profile-phone"></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">Ngày sinh:</div>
+                            <div class="col-md-8" id="profile-dateOfBirth"></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">Địa chỉ:</div>
+                            <div class="col-md-8" id="profile-address"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="static/auth.js"></script>
+    <script>
+        // Hiển thị thông tin sinh viên
+        const currentUser = checkAuth();
+        if (currentUser && currentUser.studentInfo) {
+            const info = currentUser.studentInfo;
+            document.getElementById('userInfo').textContent = `Xin chào, ${info.fullname}`;
+            document.getElementById('profile-fullname').textContent = info.fullname;
+            document.getElementById('profile-studentId').textContent = info.studentId || 'Chưa cập nhật';
+            document.getElementById('profile-email').textContent = info.email;
+            document.getElementById('profile-phone').textContent = info.phone || 'Chưa cập nhật';
+            document.getElementById('profile-dateOfBirth').textContent = info.dateOfBirth ? new Date(info.dateOfBirth).toLocaleDateString('vi-VN') : 'Chưa cập nhật';
+            document.getElementById('profile-address').textContent = info.address || 'Chưa cập nhật';
+        }
+    </script>
+</body>
+</html> 

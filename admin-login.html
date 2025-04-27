@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-container {
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+        }
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background-color: #0d6efd;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+        }
+        .admin-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .home-link {
+            color: #6c757d;
+            transition: color 0.3s;
+        }
+        .home-link:hover {
+            color: #0d6efd;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-user-shield admin-icon"></i>
+                <h4 class="mb-0">Đăng nhập Admin</h4>
+            </div>
+            <div class="card-body">
+                <form id="adminLoginForm">
+                    <div class="mb-3">
+                        <label class="form-label">Tên đăng nhập</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <input type="text" class="form-control" id="adminUsername" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mật khẩu</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                            <input type="password" class="form-control" id="adminPassword" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                    </button>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <a href="/" class="home-link text-decoration-none">
+                    <i class="fas fa-arrow-left me-1"></i>Quay lại trang chủ
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Kiểm tra nếu đã đăng nhập thì chuyển đến trang admin
+        document.addEventListener('DOMContentLoaded', function() {
+            const adminToken = localStorage.getItem('adminToken');
+            if (adminToken) {
+                window.location.replace('admin.html');
+                return;
+            }
+            
+            // Xử lý form đăng nhập
+            document.getElementById('adminLoginForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const username = document.getElementById('adminUsername').value;
+                const password = document.getElementById('adminPassword').value;
+
+                if (username === 'admin' && password === 'admin123') {
+                    localStorage.setItem('adminToken', 'admin-token');
+                    window.location.replace('admin.html');
+                } else {
+                    alert('Tên đăng nhập hoặc mật khẩu không đúng!');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
