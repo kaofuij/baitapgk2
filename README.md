@@ -31,17 +31,6 @@ source venv/bin/activate  # Linux/Mac
 ```
 pip install -r requirements.txt
 ```
-
-## Chạy Ứng Dụng
-
-1. Chạy ứng dụng:
-
-```
-python app.py
-```
-
-2. Mở trình duyệt và truy cập `http://127.0.0.1:5000`
-
 ## Cấu Trúc Cơ Sở Dữ Liệu
 
 Ứng dụng sử dụng SQLite với bảng Student có các trường sau:
