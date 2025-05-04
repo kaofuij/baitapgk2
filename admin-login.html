@@ -39,6 +39,20 @@
         .home-link:hover {
             color: #0d6efd;
         }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        .shake {
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
     </style>
 </head>
 <body>
@@ -67,6 +81,9 @@
                             </span>
                             <input type="password" class="form-control" id="adminPassword" required>
                         </div>
+                        <div class="error-message" id="loginError">
+                            Tên đăng nhập hoặc mật khẩu không đúng!
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
@@ -91,8 +108,11 @@
                 return;
             }
             
+            const loginForm = document.getElementById('adminLoginForm');
+            const errorMessage = document.getElementById('loginError');
+            
             // Xử lý form đăng nhập
-            document.getElementById('adminLoginForm').addEventListener('submit', function(event) {
+            loginForm.addEventListener('submit', function(event) {
                 event.preventDefault();
                 const username = document.getElementById('adminUsername').value;
                 const password = document.getElementById('adminPassword').value;
@@ -101,9 +121,24 @@
                     localStorage.setItem('adminToken', 'admin-token');
                     window.location.replace('admin.html');
                 } else {
-                    alert('Tên đăng nhập hoặc mật khẩu không đúng!');
+                    // Hiển thị thông báo lỗi
+                    errorMessage.style.display = 'block';
+                    loginForm.classList.add('shake');
+                    
+                    // Xóa class shake sau khi animation kết thúc
+                    setTimeout(() => {
+                        loginForm.classList.remove('shake');
+                    }, 500);
                 }
             });
+
+            // Ẩn thông báo lỗi khi người dùng bắt đầu nhập lại
+            document.getElementById('adminUsername').addEventListener('input', hideError);
+            document.getElementById('adminPassword').addEventListener('input', hideError);
+
+            function hideError() {
+                errorMessage.style.display = 'none';
+            }
         });
     </script>
 </body>

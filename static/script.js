@@ -162,6 +162,8 @@ function handleStudentLogin(event) {
     
     const studentId = document.getElementById('loginStudentId').value;
     const password = document.getElementById('loginPassword').value;
+    const errorElement = document.getElementById('loginError');
+    const form = document.getElementById('loginForm');
 
     // Lấy danh sách sinh viên đã đăng ký
     const students = JSON.parse(localStorage.getItem('students')) || [];
@@ -170,12 +172,21 @@ function handleStudentLogin(event) {
     const student = students.find(s => s.studentId === studentId && s.password === password);
     
     if (student) {
+        // Ẩn thông báo lỗi nếu có
+        errorElement.style.display = 'none';
         // Lưu thông tin sinh viên đang đăng nhập
         localStorage.setItem('currentStudent', JSON.stringify(student));
         // Chuyển đến trang sinh viên
         window.location.href = 'student.html';
     } else {
-        alert('Mã sinh viên hoặc mật khẩu không đúng!');
+        // Hiển thị thông báo lỗi
+        errorElement.style.display = 'block';
+        // Thêm hiệu ứng rung
+        form.classList.add('shake');
+        // Xóa hiệu ứng rung sau khi hoàn thành
+        setTimeout(() => {
+            form.classList.remove('shake');
+        }, 500);
     }
 }
 
@@ -193,9 +204,23 @@ function handleStudentRegister(event) {
     const password = document.getElementById('regPassword').value;
     const confirmPassword = document.getElementById('regConfirmPassword').value;
 
+    const form = document.getElementById('registerForm');
+    const studentIdError = document.getElementById('regStudentIdError');
+    const passwordError = document.getElementById('regPasswordError');
+    const successMessage = document.getElementById('regSuccessMessage');
+
+    // Ẩn tất cả thông báo
+    studentIdError.style.display = 'none';
+    passwordError.style.display = 'none';
+    successMessage.style.display = 'none';
+
     // Kiểm tra mật khẩu xác nhận
     if (password !== confirmPassword) {
-        alert('Mật khẩu xác nhận không khớp!');
+        passwordError.style.display = 'block';
+        form.classList.add('shake');
+        setTimeout(() => {
+            form.classList.remove('shake');
+        }, 500);
         return;
     }
 
@@ -204,7 +229,11 @@ function handleStudentRegister(event) {
 
     // Kiểm tra mã sinh viên đã tồn tại
     if (students.some(s => s.studentId === studentId)) {
-        alert('Mã sinh viên đã tồn tại!');
+        studentIdError.style.display = 'block';
+        form.classList.add('shake');
+        setTimeout(() => {
+            form.classList.remove('shake');
+        }, 500);
         return;
     }
 
@@ -224,11 +253,27 @@ function handleStudentRegister(event) {
     students.push(newStudent);
     localStorage.setItem('students', JSON.stringify(students));
 
-    // Thông báo đăng ký thành công
-    alert('Đăng ký tài khoản thành công!');
-    
-    // Reset form
-    document.getElementById('registerForm').reset();
+    // Hiển thị thông báo thành công
+    successMessage.style.display = 'block';
+    successMessage.style.color = '#28a745';
+    successMessage.style.fontSize = '1rem';
+    successMessage.style.padding = '10px';
+    successMessage.style.marginBottom = '15px';
+    successMessage.style.backgroundColor = '#d4edda';
+    successMessage.style.border = '1px solid #c3e6cb';
+    successMessage.style.borderRadius = '4px';
+
+    // Đợi 2 giây rồi chuyển form
+    setTimeout(() => {
+        // Reset form đăng ký
+        document.getElementById('registerForm').reset();
+        
+        // Chuyển sang form đăng nhập
+        toggleForms();
+        
+        // Điền sẵn mã sinh viên vào form đăng nhập
+        document.getElementById('loginStudentId').value = studentId;
+    }, 2000);
 }
 
 // Kiểm tra trạng thái đăng nhập khi tải trang

@@ -32,6 +32,27 @@
             padding-top: 20px;
             border-top: 1px solid #dee2e6;
         }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        .success-message {
+            color: #28a745;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+            text-align: center;
+        }
+        .shake {
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
     </style>
 </head>
 <body>
@@ -63,6 +84,9 @@
                 <div class="mb-3">
                     <label class="form-label">Mật khẩu</label>
                     <input type="password" class="form-control" id="loginPassword" required>
+                    <div class="error-message" id="loginError">
+                        Mã sinh viên hoặc mật khẩu không đúng!
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
             </form>
@@ -76,10 +100,16 @@
         <!-- Form Đăng ký -->
         <div class="form-container" id="registerForm">
             <h4 class="text-center mb-4">Đăng ký tài khoản</h4>
+            <div class="success-message" id="regSuccessMessage">
+                Đăng ký tài khoản thành công!
+            </div>
             <form onsubmit="handleStudentRegister(event)">
                 <div class="mb-3">
                     <label class="form-label">Mã sinh viên</label>
                     <input type="text" class="form-control" id="regStudentId" required>
+                    <div class="error-message" id="regStudentIdError">
+                        Mã sinh viên đã tồn tại!
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Họ và tên</label>
@@ -118,6 +148,9 @@
                 <div class="mb-3">
                     <label class="form-label">Xác nhận mật khẩu</label>
                     <input type="password" class="form-control" id="regConfirmPassword" required>
+                    <div class="error-message" id="regPasswordError">
+                        Mật khẩu xác nhận không khớp!
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-success w-100">Đăng ký</button>
             </form>
@@ -136,6 +169,10 @@
             const loginForm = document.getElementById('loginForm');
             const registerForm = document.getElementById('registerForm');
             
+            // Reset error messages when switching forms
+            document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('form').forEach(form => form.classList.remove('shake'));
+            
             if (loginForm.style.display === 'none') {
                 loginForm.style.display = 'block';
                 registerForm.style.display = 'none';
@@ -144,6 +181,14 @@
                 registerForm.style.display = 'block';
             }
         }
+
+        // Add event listeners to hide error messages when user starts typing
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+                const form = this.closest('form');
+                form.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+            });
+        });
     </script>
 </body>
 </html> 
