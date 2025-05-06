@@ -262,19 +262,17 @@
                     <form id="gradeForm" onsubmit="saveGrade(event)" class="grade-form">
                         <div class="score-section">
                             <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Mã học phần</label>
-                                    <input type="text" class="form-control" id="courseCode" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Tên học phần</label>
-                                    <input type="text" class="form-control" id="courseName" required>
+                                <div class="col-md-12">
+                                    <label class="form-label">Chọn môn học</label>
+                                    <select class="form-select" id="courseSelect" required onchange="handleCourseSelect()">
+                                        <option value="">-- Chọn môn học --</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Số tín chỉ</label>
-                                    <input type="number" class="form-control" id="credits" min="1" required>
+                                    <input type="number" class="form-control" id="credits" min="1" required readonly>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Học kỳ</label>
@@ -286,6 +284,8 @@
                                     </select>
                                 </div>
                             </div>
+                            <input type="hidden" id="courseCode">
+                            <input type="hidden" id="courseName">
                         </div>
 
                         <div class="score-section">
@@ -342,8 +342,8 @@
                             <thead>
                                 <tr>
                                     <th>STT</th>
-                                    <th>Mã HP</th>
                                     <th>Tên học phần</th>
+                                    <th>Mã HP</th>
                                     <th>TC</th>
                                     <th>Chuyên cần</th>
                                     <th>Giữa kỳ</th>

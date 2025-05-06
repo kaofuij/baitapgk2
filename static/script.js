@@ -228,7 +228,9 @@ function handleStudentRegister(event) {
     const students = JSON.parse(localStorage.getItem('students')) || [];
 
     // Kiểm tra mã sinh viên đã tồn tại
-    if (students.some(s => s.studentId === studentId)) {
+    const existingStudentIndex = students.findIndex(s => s.studentId === studentId);
+    if (existingStudentIndex >= 0) {
+        // Nếu muốn cập nhật sinh viên đã tồn tại thì thông báo
         studentIdError.style.display = 'block';
         form.classList.add('shake');
         setTimeout(() => {

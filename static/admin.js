@@ -336,6 +336,20 @@ if (!localStorage.getItem('admin')) {
     }));
 }
 
+// Khởi tạo dữ liệu mẫu cho các môn học
+const sampleCourses = [
+    { code: 'CNTT001', name: 'Nhập môn Công nghệ thông tin', credits: 3 },
+    { code: 'CNTT002', name: 'Lập trình cơ bản', credits: 3 },
+    { code: 'CNTT003', name: 'Cơ sở dữ liệu', credits: 4 },
+    { code: 'CNTT004', name: 'Lập trình web', credits: 3 },
+    { code: 'CNTT005', name: 'Mạng máy tính', credits: 3 },
+];
+
+// Thêm danh sách môn học vào localStorage nếu chưa có
+if (!localStorage.getItem('courses')) {
+    localStorage.setItem('courses', JSON.stringify(sampleCourses));
+}
+
 // Kiểm tra đăng nhập admin
 function checkAdminAuth() {
     const adminToken = localStorage.getItem('adminToken');
@@ -370,6 +384,14 @@ function resetData() {
         // Lưu lại token đăng nhập hiện tại
         const adminToken = localStorage.getItem('adminToken');
         
+        // Tìm và xóa tất cả avatar trong localStorage trước khi xóa toàn bộ dữ liệu
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith('avatar_')) {
+                localStorage.removeItem(key);
+            }
+        }
+        
         // Xóa toàn bộ localStorage
         localStorage.clear();
         
@@ -381,6 +403,10 @@ function resetData() {
         localStorage.setItem('grades', JSON.stringify([]));
         localStorage.setItem('users', JSON.stringify([]));
         localStorage.setItem('sampleDataInitialized', 'false');
+        localStorage.setItem('courses', JSON.stringify(sampleCourses));
+        
+        // Thông báo thành công
+        alert('Đã xóa toàn bộ dữ liệu và avatar!');
         
         // Tải lại trang
         window.location.reload();
@@ -483,6 +509,54 @@ function loadStudentList() {
     }
 }
 
+// Tự động điền tên môn học khi nhập mã học phần
+function autofillCourseName() {
+    const courseCode = document.getElementById('courseCode').value;
+    const courses = JSON.parse(localStorage.getItem('courses')) || [];
+    const course = courses.find(c => c.code === courseCode);
+    
+    if (course) {
+        document.getElementById('courseName').value = course.name;
+        document.getElementById('credits').value = course.credits;
+    }
+}
+
+// Hàm để load danh sách môn học vào dropdown
+function loadCourseSelect() {
+    const courseSelect = document.getElementById('courseSelect');
+    const courses = JSON.parse(localStorage.getItem('courses')) || [];
+    
+    // Xóa tất cả options cũ trừ option mặc định
+    while (courseSelect.options.length > 1) {
+        courseSelect.remove(1);
+    }
+    
+    // Thêm các môn học vào dropdown
+    courses.forEach(course => {
+        const option = document.createElement('option');
+        option.value = course.code;
+        option.textContent = course.name;
+        courseSelect.appendChild(option);
+    });
+}
+
+// Hàm xử lý khi chọn môn học
+function handleCourseSelect() {
+    const courseSelect = document.getElementById('courseSelect');
+    const courses = JSON.parse(localStorage.getItem('courses')) || [];
+    const selectedCourse = courses.find(c => c.code === courseSelect.value);
+    
+    if (selectedCourse) {
+        document.getElementById('courseCode').value = selectedCourse.code;
+        document.getElementById('courseName').value = selectedCourse.name;
+        document.getElementById('credits').value = selectedCourse.credits;
+    } else {
+        document.getElementById('courseCode').value = '';
+        document.getElementById('courseName').value = '';
+        document.getElementById('credits').value = '';
+    }
+}
+
 // Hiển thị modal cập nhật điểm
 function showGradeModal(studentId) {
     const student = studentManager.getById(studentId);
@@ -499,6 +573,9 @@ function showGradeModal(studentId) {
     document.getElementById('gradeForm').reset();
     document.getElementById('totalScore').textContent = '0.0';
     document.getElementById('letterGrade').textContent = '-';
+    
+    // Load danh sách môn học vào dropdown
+    loadCourseSelect();
     
     // Load bảng điểm hiện tại
     loadStudentGrades(studentId);
@@ -518,8 +595,8 @@ function loadStudentGrades(studentId) {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${index + 1}</td>
-            <td>${grade.courseCode}</td>
             <td>${grade.courseName}</td>
+            <td>${grade.courseCode}</td>
             <td>${grade.credits}</td>
             <td>${grade.attendanceScore}</td>
             <td>${grade.midtermScore}</td>
@@ -592,8 +669,8 @@ function viewCredits(studentId) {
                             <thead>
                                 <tr>
                                     <th>STT</th>
-                                    <th>Mã môn</th>
                                     <th>Tên môn học</th>
+                                    <th>Mã môn</th>
                                     <th>Số tín chỉ</th>
                                     <th>Điểm CC</th>
                                     <th>Điểm GK</th>
@@ -614,8 +691,8 @@ function viewCredits(studentId) {
             modalHTML += `
                                 <tr>
                                     <td>${index + 1}</td>
-                                    <td>${grade.courseCode}</td>
                                     <td>${grade.courseName}</td>
+                                    <td>${grade.courseCode}</td>
                                     <td>${grade.credits}</td>
                                     <td>${grade.attendanceScore}</td>
                                     <td>${grade.midtermScore}</td>
@@ -674,6 +751,19 @@ function deleteStudent(studentId) {
     
     if (confirm(`Bạn có chắc chắn muốn xóa sinh viên có mã ${studentId}?`)) {
         try {
+            // Xóa tất cả điểm của sinh viên
+            const grades = gradeManager.getAll();
+            grades.forEach(grade => {
+                if (grade.studentId === studentId) {
+                    gradeManager.delete(`${grade.studentId}-${grade.courseCode}-${grade.semester}`);
+                }
+            });
+            
+            // Xóa avatar của sinh viên khỏi localStorage nếu có
+            if (localStorage.getItem(`avatar_${studentId}`)) {
+                localStorage.removeItem(`avatar_${studentId}`);
+            }
+            
             // Xóa sinh viên khỏi hệ thống
             studentManager.remove(studentId);
             
@@ -681,7 +771,7 @@ function deleteStudent(studentId) {
             loadStudentList();
             
             // Thông báo thành công
-            alert('Đã xóa sinh viên thành công!');
+            alert('Đã xóa sinh viên, avatar và toàn bộ điểm thành công!');
         } catch (error) {
             console.error("Lỗi khi xóa sinh viên:", error);
             alert('Có lỗi xảy ra khi xóa sinh viên: ' + error.message);
@@ -725,6 +815,11 @@ function saveGrade(event) {
     const attendanceScore = parseFloat(document.getElementById('attendanceScore').value);
     const midtermScore = parseFloat(document.getElementById('midtermScore').value);
     const finalScore = parseFloat(document.getElementById('finalScore').value);
+
+    if (!courseCode || !courseName) {
+        alert('Vui lòng chọn môn học!');
+        return;
+    }
 
     // Tạo đối tượng Grade mới
     const newGrade = new Grade(
@@ -914,6 +1009,12 @@ function clearUndefinedStudents() {
             // Lọc và xóa những sinh viên có id chứa "undefined"
             allStudents.forEach(student => {
                 if (student.studentId.includes("undefined")) {
+                    // Xóa avatar của sinh viên khỏi localStorage nếu có
+                    if (localStorage.getItem(`avatar_${student.studentId}`)) {
+                        localStorage.removeItem(`avatar_${student.studentId}`);
+                    }
+                    
+                    // Xóa sinh viên
                     studentManager.remove(student.studentId);
                     removedCount++;
                 }
@@ -924,7 +1025,7 @@ function clearUndefinedStudents() {
             
             // Thông báo kết quả
             if (removedCount > 0) {
-                alert(`Đã xóa ${removedCount} sinh viên không xác định!`);
+                alert(`Đã xóa ${removedCount} sinh viên không xác định và avatar của họ!`);
             } else {
                 alert('Không tìm thấy sinh viên không xác định nào!');
             }
