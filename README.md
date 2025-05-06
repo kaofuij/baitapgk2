@@ -37,7 +37,6 @@ pip install -r requirements.txt
 - id: Khóa chính, tự động tăng
 - name: Họ và tên sinh viên
 - email: Địa chỉ email
-- phone: Số điện thoại
 - address: Địa chỉ
 - date_of_birth: Ngày sinh
 - created_at: Ngày tạo bản ghi 
